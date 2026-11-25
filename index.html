@@ -2,115 +2,522 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Free WiFi - Sambungkan ke Internet</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#be123c">
+<title>Masuk ke jaringan Wi-Fi</title>
 <style>
-  * { box-sizing: border-box; }
-  html, body { margin: 0; min-height: 100%; }
+  * {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+    overflow-x: hidden;
+  }
   body {
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    background: linear-gradient(160deg, #0b63f6 0%, #0a3fa8 100%);
-    color: #1b1f24;
-    display: flex; align-items: center; justify-content: center;
-    min-height: 100vh; padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #ffffff;
+    color: #111827;
+    display: flex;
+    flex-direction: column;
+    min-height: 100svh;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
   }
-  .card {
-    background: #fff; width: 100%; max-width: 380px; border-radius: 20px;
-    padding: 32px 24px 24px; text-align: center;
-    box-shadow: 0 20px 50px rgba(0,0,0,.25);
-  }
-  .icon {
-    width: 76px; height: 76px; margin: 0 auto 16px; border-radius: 50%;
-    background: #e8f0ff; display: flex; align-items: center; justify-content: center;
-  }
-  .icon svg { width: 42px; height: 42px; }
-  h1 { font-size: 1.5rem; margin: 0 0 4px; }
-  .ssid { color: #5b6573; font-size: .95rem; margin: 0 0 20px; }
-  .status {
-    display: inline-flex; align-items: center; gap: 8px; font-size: .85rem;
-    background: #eaf8ef; color: #17803d; padding: 6px 12px; border-radius: 999px;
-    margin-bottom: 22px;
-  }
-  .dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; }
-  .info {
-    text-align: left; font-size: .9rem; color: #38414d; background: #f5f7fa;
-    border-radius: 12px; padding: 14px 16px; margin-bottom: 22px; line-height: 1.7;
-  }
-  .info b { color: #1b1f24; }
-  #connect {
-    width: 100%; border: 0; border-radius: 12px; padding: 16px;
-    background: #0b63f6; color: #fff; font: 700 1.05rem system-ui, sans-serif;
-    cursor: pointer;
-  }
-  #connect:hover, #connect:focus-visible { background: #0952cf; }
-  #connect:active { transform: scale(.98); }
-  .terms { font-size: .75rem; color: #8a94a3; margin: 14px 0 0; line-height: 1.5; }
 
-  #stage { position: fixed; inset: 0; background: #000; display: none; z-index: 5; }
-  #stage video { width: 100%; height: 100%; object-fit: contain; background: #000; }
+  /* Bar atas khas jendela Pop-up "Masuk ke jaringan Wi-Fi" di HP */
+  .mobile-portal-bar {
+    flex-shrink: 0;
+    background: #1f2937;
+    color: #f9fafb;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .portal-url {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow: hidden;
+  }
+  .portal-url-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+  .portal-url-text strong {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #fff;
+  }
+  .portal-url-text span {
+    font-size: 0.68rem;
+    color: #9ca3af;
+  }
+  .portal-dots {
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #9ca3af;
+    padding: 4px 6px;
+  }
+
+  /* Header ISP Mobile Full-Width (Anti Tergencet) */
+  .isp-hero {
+    flex-shrink: 0;
+    background: linear-gradient(145deg, #e11d48 0%, #9f1239 100%);
+    color: #fff;
+    padding: 18px 20px 24px;
+    border-radius: 0 0 26px 26px;
+    box-shadow: 0 10px 25px rgba(225, 29, 72, 0.22);
+    position: relative;
+    overflow: hidden;
+  }
+  .isp-hero::before {
+    content: "";
+    position: absolute;
+    right: -30px;
+    bottom: -40px;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    pointer-events: none;
+  }
+
+  .brand-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .logo-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-icon {
+    width: 40px;
+    height: 40px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+    flex-shrink: 0;
+  }
+  .brand-title {
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: -0.4px;
+    line-height: 1.1;
+  }
+  .brand-title span {
+    font-weight: 400;
+    opacity: 0.9;
+  }
+  .brand-tagline {
+    font-size: 0.7rem;
+    opacity: 0.85;
+  }
+  .wifi-chip {
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .hero-msg h1 {
+    font-size: 1.15rem;
+    margin: 0 0 4px;
+    font-weight: 700;
+  }
+  .hero-msg p {
+    font-size: 0.82rem;
+    margin: 0;
+    opacity: 0.92;
+    line-height: 1.4;
+  }
+
+  /* Konten Utama Mobile */
+  .main-body {
+    flex: 1 0 auto;
+    padding: 16px 18px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 14px;
+  }
+
+  /* Kartu Koneksi Aktif */
+  .conn-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 14px 16px;
+  }
+  .conn-row-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #cbd5e1;
+  }
+  .ssid-info small {
+    display: block;
+    font-size: 0.7rem;
+    color: #64748b;
+  }
+  .ssid-info strong {
+    font-size: 0.95rem;
+    color: #0f172a;
+  }
+  .signal-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #dcfce7;
+    color: #15803d;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 5px 10px;
+    border-radius: 999px;
+  }
+  .pulse-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #22c55e;
+    animation: blink 1.4s infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.35; transform: scale(1.3); }
+  }
+
+  .meta-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .meta-box {
+    background: #fff;
+    padding: 9px 11px;
+    border-radius: 10px;
+    border: 1px solid #f1f5f9;
+  }
+  .meta-box span {
+    display: block;
+    font-size: 0.68rem;
+    color: #64748b;
+    margin-bottom: 2px;
+  }
+  .meta-box b {
+    font-size: 0.82rem;
+    color: #1e293b;
+  }
+
+  /* Banner Info Paket */
+  .mobile-notice {
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .notice-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: #ffe4e6;
+    color: #e11d48;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .notice-text {
+    font-size: 0.78rem;
+    color: #881337;
+    line-height: 1.35;
+  }
+  .notice-text strong {
+    display: block;
+    font-size: 0.84rem;
+    margin-bottom: 1px;
+  }
+
+  /* Area Tombol Bawah Ramah Jempol */
+  .bottom-action {
+    margin-top: auto;
+    padding-top: 4px;
+  }
+
+  #connect {
+    width: 100%;
+    min-height: 52px;
+    border: 0;
+    border-radius: 15px;
+    padding: 14px 20px;
+    background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
+    color: #fff;
+    font-size: 1.02rem;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(225, 29, 72, 0.32);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: transform 0.12s ease;
+  }
+  #connect:active {
+    transform: scale(0.97);
+  }
+  #connect:disabled {
+    opacity: 0.88;
+  }
+
+  .spinner {
+    width: 18px;
+    height: 18px;
+    border: 2.5px solid rgba(255,255,255,0.35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .terms-mobile {
+    font-size: 0.7rem;
+    color: #6b7280;
+    text-align: center;
+    margin: 12px 0 12px;
+    line-height: 1.45;
+  }
+  .terms-mobile u {
+    color: #e11d48;
+  }
+
+  .partner-strip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding-top: 10px;
+    border-top: 1px solid #f1f5f9;
+    font-size: 0.66rem;
+    color: #94a3b8;
+  }
+  .p-pill {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+
+  /* Layar Penuh Video Prank */
+  #stage {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    display: none;
+    z-index: 9999;
+  }
+  #stage video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #000;
+  }
   #err {
-    position: absolute; inset: 0; display: none; align-items: center; justify-content: center;
-    color: #fff; text-align: center; padding: 24px; font-size: 1rem;
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    text-align: center;
+    padding: 24px;
+    font-size: 0.95rem;
   }
 </style>
 </head>
 <body>
 
-<main class="card" id="portal">
-  <div class="icon" aria-hidden="true">
-    <svg viewBox="0 0 24 24" fill="none" stroke="#0b63f6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M2 8.8a15 15 0 0 1 20 0"/>
-      <path d="M5.5 12.4a10 10 0 0 1 13 0"/>
-      <path d="M9 16a5 5 0 0 1 6 0"/>
-      <circle cx="12" cy="19.5" r="1" fill="#0b63f6"/>
-    </svg>
+  <!-- Header Sistem Pop-up WiFi Mobile -->
+  <div class="mobile-portal-bar" id="sys-bar">
+    <div class="portal-url">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 12.55a11 11 0 0 1 14.08 0"/>
+        <path d="M1.42 9a16 16 0 0 1 21.16 0"/>
+        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+        <circle cx="12" cy="20" r="1" fill="#22c55e"/>
+      </svg>
+      <div class="portal-url-text">
+        <strong>Masuk ke jaringan Wi-Fi</strong>
+        <span>portal.indihomo-wifi.id</span>
+      </div>
+    </div>
+    <div class="portal-dots">•••</div>
   </div>
 
-  <h1>Free WiFi</h1>
-  <p class="ssid">Jaringan: Free_WiFi_Gratis</p>
+  <!-- Bagian Atas Merah ISP Parodi -->
+  <header class="isp-hero" id="hero">
+    <div class="brand-header">
+      <div class="logo-wrap">
+          <img
+             class="logo-icon"
+             src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjliOK7tlpcZF74rSnJpRcHvbhvwlMwfWVn251jv7xhZ5Tc_tsWM7gHlpZt6ovs5npipJcYGpmf2s97WW5ov2RdtWSQwo0bDPG2wec9C3spxsANS-kyP1Mtij7RoxuPAuebhEZK-s-tF3mu/s586/lambang-indihome.png"
+             alt="Logo IndiHome"
+         />
+        <div>
+          <div class="brand-title">IndiHomo<span>Fiber</span></div>
+          <div class="brand-tagline">Koneksi Tanpa Batas (Katanya)</div>
+        </div>
+      </div>
+      <div class="wifi-chip">5G Hotspot</div>
+    </div>
 
-  <div class="status"><span class="dot"></span> Sinyal kuat · Tanpa kata sandi</div>
+    <div class="hero-msg">
+      <h1>Aktivasi Internet Gratis</h1>
+      <p>Satu langkah lagi untuk menikmati akses WiFi berkecepatan tinggi di ponsel Anda.</p>
+    </div>
+  </header>
 
-  <div class="info">
-    <div><b>Kecepatan:</b> hingga 50 Mbps</div>
-    <div><b>Durasi:</b> 24 jam gratis</div>
-    <div><b>Biaya:</b> Rp0</div>
+  <!-- Konten Utama -->
+  <main class="main-body" id="portal">
+    <div style="display:flex; flex-direction:column; gap:14px;">
+      <section class="conn-card">
+        <div class="conn-row-top">
+          <div class="ssid-info">
+            <small>Terhubung ke SSID</small>
+            <strong>@IndiHomo_Gratis_5G</strong>
+          </div>
+          <div class="signal-badge">
+            <span class="pulse-dot"></span> Sinyal Penuh
+          </div>
+        </div>
+
+        <div class="meta-list">
+          <div class="meta-box">
+            <span>Kecepatan</span>
+            <b>Up to 300 Mbps*</b>
+          </div>
+          <div class="meta-box">
+            <span>Kuota FUP</span>
+            <b>Unlimited</b>
+          </div>
+          <div class="meta-box">
+            <span>IP Perangkat</span>
+            <b>192.168.1.104</b>
+          </div>
+          <div class="meta-box">
+            <span>Tarif Sesi</span>
+            <b>Rp 0 (Gratis)</b>
+          </div>
+        </div>
+      </section>
+
+      <div class="mobile-notice">
+        <div class="notice-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+          </svg>
+        </div>
+        <div class="notice-text">
+          <strong>Mode Gaming &amp; Streaming Aktif</strong>
+          Ping stabil tanpa perlu matikan-nyalakan mode pesawat.
+        </div>
+      </div>
+    </div>
+
+    <!-- Area Bawah Khusus Jempol -->
+    <div class="bottom-action">
+      <button id="connect" type="button">
+        <span class="spinner" id="spin"></span>
+        <span id="btn-text">Sambungkan ke Internet</span>
+      </button>
+
+      <p class="terms-mobile">
+        Dengan mengetuk tombol di atas, Anda menyetujui <u>Syarat &amp; Ketentuan</u> serta siap menerima kejutan jaringan.
+      </p>
+
+      <div class="partner-strip">
+        <span>Jaringan:</span>
+        <span class="p-pill">BizNet</span>
+        <span class="p-pill">InternetRakyat</span>
+        <span class="p-pill">MyRepublic</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- Video Prank Fullscreen -->
+  <div id="stage">
+    <video id="vid" src="https://dikakita.my.id/gallery/gg.mp4" playsinline webkit-playsinline loop preload="auto"></video>
+    <div id="err">Video tidak dapat dimuat.</div>
   </div>
-
-  <button id="connect" type="button">Sambungkan ke Internet</button>
-
-  <p class="terms">Dengan menekan tombol di atas, Anda menyetujui Syarat &amp; Ketentuan penggunaan jaringan.</p>
-</main>
-
-<div id="stage">
-  <video id="vid" src="https://dikakita.my.id/gallery/gg.mp4" playsinline loop preload="auto"></video>
-  <div id="err">Video tidak dapat dimuat.</div>
-</div>
 
 <script>
   var btn = document.getElementById('connect');
+  var btnText = document.getElementById('btn-text');
+  var spin = document.getElementById('spin');
+  var sysBar = document.getElementById('sys-bar');
+  var hero = document.getElementById('hero');
   var portal = document.getElementById('portal');
   var stage = document.getElementById('stage');
   var vid = document.getElementById('vid');
   var err = document.getElementById('err');
 
   btn.addEventListener('click', function () {
-    portal.style.display = 'none';
-    document.body.style.background = '#000';
-    stage.style.display = 'block';
+    btn.disabled = true;
+    spin.style.display = 'inline-block';
+    btnText.textContent = 'Memverifikasi perangkat...';
 
     vid.muted = false;
     vid.volume = 1;
-    var p = vid.play();
-    if (p && p.catch) {
-      p.catch(function () { err.style.display = 'flex'; });
-    }
-    vid.addEventListener('error', function () { err.style.display = 'flex'; });
 
-    // Coba layar penuh (diabaikan jika browser tidak mengizinkan)
-    var el = document.documentElement;
-    var rf = el.requestFullscreen || el.webkitRequestFullscreen;
-    if (rf) { try { var r = rf.call(el); if (r && r.catch) r.catch(function(){}); } catch (e) {} }
+    setTimeout(function () {
+      sysBar.style.display = 'none';
+      hero.style.display = 'none';
+      portal.style.display = 'none';
+      document.body.style.background = '#000';
+      stage.style.display = 'block';
+
+      var p = vid.play();
+      if (p && p.catch) {
+        p.catch(function () { err.style.display = 'flex'; });
+      }
+      vid.addEventListener('error', function () { err.style.display = 'flex'; });
+
+      var el = document.documentElement;
+      var rf = el.requestFullscreen || el.webkitRequestFullscreen;
+      if (rf) {
+        try {
+          var r = rf.call(el);
+          if (r && r.catch) r.catch(function(){});
+        } catch (e) {}
+      }
+    }, 850);
   });
 </script>
 </body>
